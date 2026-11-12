@@ -1,0 +1,49 @@
+# ---------------------------------------------------------------------------
+# One command runs everything:
+#
+#     docker compose up --build        then open  http://localhost:8080
+#
+# backend  -> FastAPI on port 8000 (API docs: http://localhost:8000/docs)
+# frontend -> nginx on port 8080, serves the UI and forwards /api/* to the backend
+#
+# Settings come from a .env file next to this one (optional - copy .env.example).
+# ---------------------------------------------------------------------------
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        # The embedding model is downloaded INTO the image at build time.
+        EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}
+    environment:
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}
+      # fusion weights (semantic / lexical / LLM)
+      W_SEMANTIC: ${W_SEMANTIC:-0.5}
+      W_LEXICAL: ${W_LEXICAL:-0.3}
+      W_LLM: ${W_LLM:-0.2}
+      # optional LLM signal - leave LLM_API_KEY empty to switch it off
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://api.x.ai/v1}
+      LLM_MODEL: ${LLM_MODEL:-}
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      # lets the container reach a local Ollama server on Linux too
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      # "healthy" once the API answers (the embedding model is loaded at startup)
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 60s
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy  # start the UI only when the API is ready
+    restart: unless-stopped

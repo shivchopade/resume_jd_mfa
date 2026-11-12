@@ -1,0 +1,3 @@
+# Files Docker should not copy into the frontend image
+.DS_Store
+*.md

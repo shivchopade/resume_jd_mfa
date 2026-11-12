@@ -1,0 +1,17 @@
+Python Backend Developer (Fresher / 0-2 years)
+
+We are looking for a Python Backend Developer to build and maintain the REST APIs of our recruitment platform.
+
+Responsibilities:
+- Design, build and maintain scalable REST APIs using Python and FastAPI or Flask.
+- Write efficient SQL queries and manage relational databases such as PostgreSQL or MySQL.
+- Containerise services with Docker and deploy them to cloud platforms such as AWS.
+- Collaborate with frontend developers and use Git for version control and code reviews.
+- Write unit tests and keep the codebase clean, documented and secure.
+
+Must have: Python, SQL, Docker
+Nice to have: AWS, Git
+
+Qualification: B.E. / B.Tech in Computer Science, IT or a related field.
+
+

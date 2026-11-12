@@ -1,0 +1,4 @@
+{
+  "must_have": "Python, SQL, Docker",
+  "nice_to_have": "AWS, Git"
+}
